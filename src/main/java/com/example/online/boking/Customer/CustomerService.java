@@ -14,22 +14,32 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
 
     @Autowired
-    public CustomerService(CustomerRepository customerRepository){
+    public CustomerService(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
 
-    public List<Customer> getCustomers(){
+    public List<Customer> getCustomers() {
 
-      return customerRepository.findAll();
+        return customerRepository.findAll();
 
     }
 
     public void addNewCustomer(Customer customer) {
-       Optional<Customer>customerOptional= customerRepository
-               .findCustomerByEmail(customer.getEmail());
-       if(customerOptional.isPresent()){
-           throw new IllegalStateException("email taken");
-       }
-     customerRepository.save(customer);
+        Optional<Customer> customerOptional = customerRepository
+                .findCustomerByEmail(customer.getEmail());
+        if (customerOptional.isPresent()) {
+            throw new IllegalStateException("email taken");
+        }
+        customerRepository.save(customer);
+    }
+
+    public void deleteCustomer(Long customerId) {
+        boolean exists = customerRepository.existsById(customerId);
+        if (!exists) {
+            throw new IllegalStateException(
+                    "customer with id " + customerId + " does not exists");
+
+        }
+        customerRepository.deleteById(customerId);
     }
 }
